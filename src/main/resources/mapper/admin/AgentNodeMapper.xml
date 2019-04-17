@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tbcloud.agent.admin.mapper.AgentNodeMapper">
+
+    <resultMap id="BaseResultMap2" type="tbcloud.agent.admin.entity.vo.AgentNodeVo" >
+        <id column="node_id" property="nodeId" jdbcType="VARCHAR" />
+        <result column="manufactory" property="manufactory" jdbcType="VARCHAR" />
+        <result column="model" property="model" jdbcType="VARCHAR" />
+        <result column="firmware" property="firmware" jdbcType="VARCHAR" />
+        <result column="bind_time" property="bindTime" jdbcType="BIGINT" />
+        <result column="is_bind" property="isBind" jdbcType="TINYINT" />
+        <result column="is_share" property="isShare" jdbcType="TINYINT" />
+        <result column="comment" property="comment" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="BIGINT" />
+        <result column="update_time" property="updateTime" jdbcType="BIGINT" />
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+        <result column="partner" property="partner" jdbcType="VARCHAR" />
+        <result column="memory" property="memory" jdbcType="INTEGER" />
+        <result column="disk" property="disk" jdbcType="INTEGER" />
+        <result column="upstream" property="upstream" jdbcType="INTEGER" />
+        <result column="downstream" property="downstream" jdbcType="INTEGER" />
+        <result column="unbind_time" property="unbindTime" jdbcType="BIGINT" />
+        <result column="share_time" property="shareTime" jdbcType="BIGINT" />
+        <result column="unshare_time" property="unshareTime" jdbcType="BIGINT" />
+        <result column="user_id" property="userId" jdbcType="BIGINT" />
+        <result column="ip" property="ip" jdbcType="VARCHAR" />
+        <result column="agent_id" property="agentId" jdbcType="VARCHAR" />
+    </resultMap>
+
+
+    <sql id="Base_Column_List2" >
+    node_id, manufactory, model, firmware, bind_time, is_bind, is_share, comment, create_time,
+    update_time, is_delete, partner, memory, disk, upstream, downstream, unbind_time,
+    share_time, unshare_time, user_id, ip, a.agent_id as agent_id
+    </sql>
+
+
+    <sql id="Where_Clause2">
+
+        <if test="agentNodeQuery!=null and agentNodeQuery.agentId!=null and agentNodeQuery.agentId!=''">
+            INNER JOIN
+            (SELECT node_id as ni,agent_id
+            FROM agent_node
+            WHERE agent_id=#{agentNodeQuery.agentId}
+            and is_delete=0
+            ) AS a
+            ON a.ni=n.node_id
+        </if>
+
+        <where>
+
+            <if test="agentNodeQuery!=null and agentNodeQuery.isBind!=null ">
+                and n.is_bind=#{agentNodeQuery.isBind}
+            </if>
+            <if test="agentNodeQuery!=null and agentNodeQuery.nodeId!=null and agentNodeQuery.nodeId!='' ">
+                and n.node_id like '${agentNodeQuery.nodeId}%'
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectByPage2" resultMap="BaseResultMap2">
+
+        select
+        <include refid="Base_Column_List2"/>
+        from node_info
+        as n
+        <include refid="Where_Clause2"/>
+        order by n.create_time desc
+        limit #{agentNodeQuery.offset},#{agentNodeQuery.limit}
+
+    </select>
+
+
+    <select id="countAgentInfo2" resultType="_long">
+        select count(1)
+        from node_info
+        as n
+        <include refid="Where_Clause2"/>
+    </select>
+
+
+
+    <resultMap id="BaseResultMap" type="tbcloud.agent.admin.entity.baby.AgentNodeVo" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="agent_id" property="agentId" jdbcType="VARCHAR" />
+        <result column="node_id" property="nodeId" jdbcType="VARCHAR" />
+        <result column="factory_id" property="factoryId" jdbcType="BIGINT" />
+        <result column="product" property="product" jdbcType="VARCHAR" />
+        <result column="edition" property="edition" jdbcType="VARCHAR" />
+        <result column="router_type" property="routerType" jdbcType="VARCHAR" />
+        <result column="mac" property="mac" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="BIGINT" />
+        <result column="update_time" property="updateTime" jdbcType="BIGINT" />
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+        <result column="factory_name" property="factoryName" jdbcType="VARCHAR" />
+        <result column="alias_name" property="aliasName" jdbcType="VARCHAR" />
+        <result column="agent_name" property="agentName" jdbcType="VARCHAR" />
+
+    </resultMap>
+
+    <sql id="Base_Column_List">
+
+    an.id as id , an.agent_id as agent_id, node_id, an.factory_id as factory_id, an.product as product, edition, an.router_type as router_type, mac, an.create_time as create_time, an.update_time as update_time, an.is_delete as is_delete, fi.factory_name as factory_name, nt.alias_name as alias_name, ai.agent_name as agent_name
+
+    </sql>
+
+    <sql id="Agent_Node_List">
+
+        inner join node_type as nt on nt.router_type=an.router_type
+
+        inner join factory_info as fi on fi.id=an.factory_id
+
+        inner join agent_info as ai on ai.agent_id=an.agent_id
+
+        <where>
+            <if test="agentNodeQuery!=null and agentNodeQuery.parentAgentId!=null and agentNodeQuery.parentAgentId!='' ">
+                and an.agent_id in
+                (
+                select agent_id from agent_info
+                where parent_agent_id=#{agentNodeQuery.parentAgentId}
+                )
+            </if>
+
+            <if test="agentNodeQuery!=null and agentNodeQuery.agentId!=null and agentNodeQuery.agentId!='' ">
+
+                and an.agent_id=#{agentNodeQuery.agentId}
+
+            </if>
+
+            <if test="agentNodeQuery!=null and agentNodeQuery.routerType!=null and agentNodeQuery.routerType!=''">
+                and an.product=#{agentNodeQuery.routerType}
+            </if>
+
+            <if test="agentNodeQuery!=null and agentNodeQuery.edition!=null and agentNodeQuery.edition!='' ">
+                and an.edition=#{agentNodeQueryIs.edition}
+            </if>
+            <if test="agentNodeQuery!=null and agentNodeQuery.nodeId!=null and agentNodeQuery.nodeId!='' ">
+                and an.node_id=#{agentNodeQuery.nodeId}
+            </if>
+            <if test="agentNodeQuery!=null and agentNodeQuery.product!=null and agentNodeQuery.product!='' ">
+                and an.product=#{agentNodeQuery.product}
+            </if>
+
+        </where>
+
+
+    </sql>
+
+
+    <select id="selectByPage" resultMap="BaseResultMap">
+
+        select
+        <include refid="Base_Column_List"/>
+        from agent_node
+        as an
+        <include refid="Agent_Node_List"/>
+        order by an.create_time desc
+        limit #{agentNodeQuery.offset},#{agentNodeQuery.limit}
+
+    </select>
+
+    <select id="countAgentInfo" resultType="_long">
+        select count(1)
+        from agent_node
+        as an
+        <include refid="Agent_Node_List"/>
+    </select>
+
+
+
+</mapper>

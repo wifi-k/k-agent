@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+
+    <!--application.yml 传递参数，不能使用logback 自带的<property>标签 -->
+    <springProperty scope="context" name="appName" source="logback.appName"/>
+    <springProperty scope="context" name="logDir" source="logback.logDir"/>
+
+
+    <contextName>${appName}</contextName>
+
+    <property name="log_dir" value="${logDir}" />
+    <property name="maxHistory" value="30"/>
+
+    <!--输出到控制台-->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %contextName [%thread] %-5level %logger -%msg%n</pattern>
+        </layout>
+    </appender>
+
+    <appender name="agentService" class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log_dir}/%d{yyyy-MM-dd}/tbcloud-agent-service.log</fileNamePattern>
+            <maxHistory>${maxHistory}</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %contextName [%thread] %-5level %logger -%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="agentMapper" class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log_dir}/%d{yyyy-MM-dd}/tbcloud-agent-mapper.log</fileNamePattern>
+            <maxHistory>${maxHistory}</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %contextName [%thread] %-5level %logger -%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="agentUtils" class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log_dir}/%d{yyyy-MM-dd}/tbcloud-agent-utils.log</fileNamePattern>
+            <maxHistory>${maxHistory}</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %contextName [%thread] %-5level %logger -%msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <logger name="tbcloud.agent.admin.mapper" addtivity="false" level="debug">
+
+        <!--<appender-ref ref="STDOUT"/>-->
+        <appender-ref ref="agentMapper"/>
+
+    </logger>
+
+    <logger name="tbcloud.agent.admin.service.impl" addtivity="false" level="debug">
+
+        <!--<appender-ref ref="STDOUT"/>-->
+        <appender-ref ref="agentService"/>
+
+    </logger>
+
+    <logger name="tbcloud.agent.admin.utils" addtivity="false" level="debug">
+
+        <!--<appender-ref ref="STDOUT"/>-->
+        <appender-ref ref="agentUtils"/>
+
+    </logger>
+
+    <root level="info">
+
+        <appender-ref ref="STDOUT" />
+        <!--<appender-ref ref="file" />-->
+
+    </root>
+
+
+</configuration>

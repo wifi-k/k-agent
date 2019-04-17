@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tbcloud.agent.admin.mapper.AgentInfoMapper">
+
+    <resultMap id="BaseResultMap" type="tbcloud.agent.admin.entity.vo.AgentInfoVo" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="agent_id" property="agentId" jdbcType="VARCHAR" />
+        <result column="agent_name" property="agentName" jdbcType="VARCHAR" />
+        <result column="agent_short_name" property="agentShortName" jdbcType="VARCHAR" />
+        <result column="agent_type" property="agentType" jdbcType="VARCHAR" />
+        <result column="parent_agent_id" property="parentAgentId" jdbcType="VARCHAR" />
+        <result column="channel_manager_id" property="channelManagerId" jdbcType="BIGINT" />
+        <result column="location" property="location" jdbcType="VARCHAR" />
+        <result column="start_time" property="startTime" jdbcType="BIGINT" />
+        <result column="end_time" property="endTime" jdbcType="BIGINT" />
+        <result column="source_from" property="sourceFrom" jdbcType="VARCHAR" />
+        <result column="agent_category" property="agentCategory" jdbcType="VARCHAR" />
+        <result column="agent_grade" property="agentGrade" jdbcType="VARCHAR" />
+        <result column="agent_status" property="agentStatus" jdbcType="TINYINT" />
+        <result column="agent_role" property="agentRole" jdbcType="VARCHAR" />
+        <result column="agent_product" property="agentProduct" jdbcType="VARCHAR" />
+        <result column="agent_email" property="agentEmail" jdbcType="VARCHAR" />
+        <result column="agent_service_phone" property="agentServicePhone" jdbcType="VARCHAR" />
+        <result column="agent_contact_phone" property="agentContactPhone" jdbcType="VARCHAR" />
+        <result column="agent_contacts" property="agentContacts" jdbcType="VARCHAR" />
+        <result column="router_num" property="routerNum" jdbcType="BIGINT" />
+        <result column="create_time" property="createTime" jdbcType="BIGINT" />
+        <result column="update_time" property="updateTime" jdbcType="BIGINT" />
+        <result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+    id, agent_id, agent_name, agent_short_name, agent_type, parent_agent_id, channel_manager_id,
+    location, start_time, end_time, source_from, agent_category, agent_grade, agent_status,
+    agent_role, agent_product, agent_email, agent_service_phone, agent_contact_phone,
+    agent_contacts, router_num, create_time, update_time, is_delete
+  </sql>
+
+
+    <sql id="Where_Clause">
+
+        <if test="agentInfoQuery!=null and agentInfoQuery.province!=null and agentInfoQuery.province!=''">
+            inner join
+            (select agent_id as agent_b
+            from agent_base
+            where real_value
+            like '${agentInfoQuery.province}%'
+            and is_delete=0
+            <if test="agentInfoQuery!=null and agentInfoQuery.city!=null and agentInfoQuery.city!=''">
+              and real_value like '${agentInfoQuery.city}%'
+            </if>
+            group by agent_id
+            ) b
+            on a.agent_id=b.agent_b
+        </if>
+
+        <where>
+            a.is_delete=0
+
+            <!--<if test="agentInfoQuery!=null and agentInfoQuery.agentId!=null and agentInfoQuery.agentId!='' ">-->
+                <!--or a.parent_agent_id=#{agentInfoQuery.parentAgentId}-->
+
+            <!--</if>-->
+
+            and a.agent_id in (
+            SELECT agent_id FROM agent_info
+            WHERE agent_id=#{agentInfoQuery.agentId}
+            OR parent_agent_id=#{agentInfoQuery.parentAgentId}
+            )
+
+            <if test="agentInfoQuery!=null and agentInfoQuery.agentName!=null and agentInfoQuery.agentName!='' ">
+                and a.agent_name like '%${agentInfoQuery.agentName}%'
+            </if>
+
+            <if test="agentInfoQuery!=null and agentInfoQuery.agentStatus!=null and agentInfoQuery.agentStatus!=''and agentInfoQuery.agentStatus==0 ">
+                and a.agent_status=#{agentInfoQuery.agentStatus} and #{agentInfoQuery.currentTime}<![CDATA[ < ]]> a.end_time
+            </if>
+            <if test="agentInfoQuery!=null and agentInfoQuery.agentStatus!=null and agentInfoQuery.agentStatus!=''and agentInfoQuery.agentStatus==2 ">
+                and a.agent_status=0 and #{agentInfoQuery.currentTime}<![CDATA[ > ]]> a.end_time
+            </if>
+            <if test="agentInfoQuery!=null and agentInfoQuery.agentStatus!=null and agentInfoQuery.agentStatus!=''and agentInfoQuery.agentStatus==1 ">
+                and a.agent_status=#{agentInfoQuery.agentStatus}
+            </if>
+
+            <if test="agentInfoQuery!=null and agentInfoQuery.agentType!=null and agentInfoQuery.agentType!='' ">
+                and a.agent_type=#{agentInfoQuery.agentType}
+            </if>
+
+        </where>
+
+    </sql>
+
+    <select id="selectByPage" resultMap="BaseResultMap">
+
+        select
+        <include refid="Base_Column_List"/>
+        from agent_info
+        as a
+        <include refid="Where_Clause"/>
+        order by a.create_time desc
+        limit #{agentInfoQuery.offset},#{agentInfoQuery.limit}
+
+    </select>
+
+
+    <select id="countAgentInfo" resultType="_long">
+        select count(1)
+        from agent_info
+        as a
+        <include refid="Where_Clause"/>
+    </select>
+
+
+
+    <sql id="ByName">
+        <where>
+            is_delete=0
+            <if test="agentInfoQuery.agentId!=null and agentInfoQuery.agentId!=''">
+                and agent_id=#{agentInfoQuery.agentId}
+            </if>
+            <if test="agentInfoQuery.agentName!=null and agentInfoQuery.agentName!=''">
+                and agent_name=#{agentInfoQuery.agentName}
+            </if>
+
+        </where>
+    </sql>
+
+    <select id="selectByName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from agent_info
+        <include refid="ByName"/>
+    </select>
+
+
+</mapper>
