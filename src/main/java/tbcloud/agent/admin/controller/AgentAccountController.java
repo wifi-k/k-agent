@@ -1,6 +1,7 @@
 package tbcloud.agent.admin.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,8 +12,10 @@ import tbcloud.agent.admin.entity.baby.AgentAccountQuery;
 import tbcloud.agent.admin.entity.baby.AgentAccountUpdate;
 import tbcloud.agent.admin.entity.vo.LoginToken;
 import tbcloud.agent.admin.service.IAgentAccountService;
+import tbcloud.lib.api.util.IDUtil;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * <p>
@@ -91,5 +94,13 @@ public class AgentAccountController {
         return iAgentAccountService.agentAccountLogout(token);
     }
 
+    @RequestMapping(value = "/info",method = RequestMethod.POST)
+    @ResponseBody
+    public Gather<AgentAccount> selectLoginName(HttpServletRequest request){
+
+        String token=request.getHeader("api-token");
+
+        return iAgentAccountService.findAgentIdToAccount(request.getHeader("api-token"));
+    }
 
 }

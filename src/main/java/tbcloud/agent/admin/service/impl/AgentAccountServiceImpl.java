@@ -51,7 +51,7 @@ public class AgentAccountServiceImpl extends ServiceImpl<AgentAccountMapper, Age
     IAgentInfoService iAgentInfoService;
 
     @Autowired
-    private RedisClient redisClinet;
+    private RedisClient redisClient;
 
     @Override
     public Gather<Void> addAgentAccount(AgentAccountUpdate agentAccountUpdate) {
@@ -67,13 +67,13 @@ public class AgentAccountServiceImpl extends ServiceImpl<AgentAccountMapper, Age
             List<AgentAccount> agentAccountList= agentAccountMapper.selectList(queryWrapper);
 
             if(!agentAccountList.isEmpty()){
-                gather.setCode(ApiConstCollection.UPDATE_FAIL_CODE);
+                gather.setCode(ApiConstCollection.AGENT_LOGIN_NAME_NO);
                 return gather;
             }
 
             //2.密码和确认密码比对
             if(!agentAccountUpdate.getPasswd().equals(agentAccountUpdate.getConfirmPassWd())){
-                gather.setCode(ApiConstCollection.UPDATE_FAIL_CODE);
+                gather.setCode(ApiConstCollection.AGENT_LOGIN_PASSWORD_NO);
                 return gather;
             }
 
@@ -90,8 +90,8 @@ public class AgentAccountServiceImpl extends ServiceImpl<AgentAccountMapper, Age
             agentAccountUpdate.setUpdateTime(System.currentTimeMillis());
             agentAccountUpdate.setAccountSource("treebear");
             agentAccountUpdate.setAgentId(agentId);
-            agentAccountUpdate.setType(ApiCode.SUCC);
-            agentAccountUpdate.setIsAdmin(ApiConstCollection.UPDATE_FAIL_CODE);
+            agentAccountUpdate.setType(ApiConstCollection.AGENT_TYPE_OPERATION_CODE);
+            agentAccountUpdate.setIsAdmin(ApiConstCollection.AGENT_TYPE_CODE);
 
             int i=agentAccountMapper.insert(agentAccountUpdate);
 
@@ -101,10 +101,10 @@ public class AgentAccountServiceImpl extends ServiceImpl<AgentAccountMapper, Age
         }catch (Exception e){
             e.printStackTrace();
             log.error(e.getMessage(),e);
-            gather.setCode(ApiConstCollection.UPDATE_FAIL_CODE);
+            gather.setCode(ApiConstCollection.AGENT_UPDATE_FAIL_CODE);
             return gather;
         }
-        gather.setCode(ApiConstCollection.UPDATE_FAIL_CODE);
+        gather.setCode(ApiConstCollection.AGENT_UPDATE_FAIL_CODE);
 
         return gather;
     }
@@ -119,7 +119,7 @@ public class AgentAccountServiceImpl extends ServiceImpl<AgentAccountMapper, Age
 
             //2.密码和确认密码比对
             if(!agentAccountUpdate.getPasswd().equals(agentAccountUpdate.getConfirmPassWd())){
-                gather.setCode(ApiConstCollection.UPDATE_FAIL_CODE);
+                gather.setCode(ApiConstCollection.AGENT_LOGIN_PASSWORD_NO);
                 return gather;
             }
 
@@ -139,10 +139,10 @@ public class AgentAccountServiceImpl extends ServiceImpl<AgentAccountMapper, Age
             }
         } catch (Exception e) {
             e.printStackTrace();
-            gather.setCode(ApiConstCollection.UPDATE_FAIL_CODE);
+            gather.setCode(ApiConstCollection.AGENT_UPDATE_FAIL_CODE);
             log.error(e.getMessage(),e);
         }
-        gather.setCode(ApiConstCollection.UPDATE_FAIL_CODE);
+        gather.setCode(ApiConstCollection.AGENT_UPDATE_FAIL_CODE);
         return gather;
     }
 
@@ -169,10 +169,10 @@ public class AgentAccountServiceImpl extends ServiceImpl<AgentAccountMapper, Age
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage(),e);
-            gather.setCode(ApiConstCollection.UPDATE_FAIL_CODE);
+            gather.setCode(ApiConstCollection.AGENT_UPDATE_FAIL_CODE);
             return gather;
         }
-        gather.setCode(ApiConstCollection.UPDATE_FAIL_CODE);
+        gather.setCode(ApiConstCollection.AGENT_UPDATE_FAIL_CODE);
         return gather;
     }
 
@@ -205,7 +205,7 @@ public class AgentAccountServiceImpl extends ServiceImpl<AgentAccountMapper, Age
             }
 
             queryWrapper.eq("agent_id",agentId);
-            queryWrapper.eq("is_delete",ApiCodeCollection.SUCCESS);
+            queryWrapper.eq("is_delete",ApiConstCollection.IS_DELETE_CODE);
             queryWrapper.orderByDesc("create_time");
 
             IPage<AgentAccount> userIPage=agentAccountMapper.selectPage(page,queryWrapper);
@@ -222,7 +222,7 @@ public class AgentAccountServiceImpl extends ServiceImpl<AgentAccountMapper, Age
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage(),e);
-            gather.setCode(ApiConstCollection.UPDATE_FAIL_CODE);
+            gather.setCode(ApiConstCollection.AGENT_UPDATE_FAIL_CODE);
             gather.setData(null);
             return gather;
         }
@@ -242,13 +242,13 @@ public class AgentAccountServiceImpl extends ServiceImpl<AgentAccountMapper, Age
 
             QueryWrapper queryWrapper=new QueryWrapper();
             queryWrapper.eq("login_name",agentAccount.getLoginName());
-            queryWrapper.eq("is_delete", ApiCodeCollection.SUCCESS);
+            queryWrapper.eq("is_delete", ApiConstCollection.IS_DELETE_CODE);
 
             List<AgentAccount> agentAccountList=agentAccountMapper.selectList(queryWrapper);
 
             if(agentAccountList.isEmpty() || agentAccountList.size()>1){
 
-                gather.setCode(ApiConstCollection.UPDATE_FAIL_CODE);
+                gather.setCode(ApiConstCollection.AGENT_LOGIN_NAME_NO);
                 gather.setData(null);
                 return gather;
             }
@@ -260,8 +260,8 @@ public class AgentAccountServiceImpl extends ServiceImpl<AgentAccountMapper, Age
             if(b) {
                 //允许登录
                 String token = IDUtil.genToken(agentAccountList.get(0).getId());
-                redisClinet.set(ApiConstCollection.REDIS_KEY_AGENT_TOKEN +agentAccountList.get(0).getId(), token);
-                redisClinet.expire(ApiConstCollection.REDIS_KEY_AGENT_TOKEN + agentAccountList.get(0).getId(), ApiConstCollection.REDIS_ADMIN_TOKEN_EXPIRED);
+                redisClient.set(ApiConstCollection.REDIS_KEY_AGENT_TOKEN +agentAccountList.get(0).getId(), token);
+                redisClient.expire(ApiConstCollection.REDIS_KEY_AGENT_TOKEN + agentAccountList.get(0).getId(), ApiConstCollection.REDIS_ADMIN_TOKEN_EXPIRED);
                 log.info("login token {} ", token);
                 loginToken.setToken(token);
                 gather.setData(loginToken);
@@ -270,11 +270,11 @@ public class AgentAccountServiceImpl extends ServiceImpl<AgentAccountMapper, Age
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage(),e);
-            gather.setCode(ApiConstCollection.UPDATE_FAIL_CODE);
+            gather.setCode(ApiConstCollection.AGENT_UPDATE_FAIL_CODE);
             gather.setData(null);
             return gather;
         }
-        gather.setCode(ApiConstCollection.UPDATE_FAIL_CODE);
+        gather.setCode(ApiConstCollection.AGENT_UPDATE_FAIL_CODE);
         gather.setData(null);
         return gather;
     }
@@ -285,7 +285,7 @@ public class AgentAccountServiceImpl extends ServiceImpl<AgentAccountMapper, Age
         Gather<Void> gather=new Gather<>();
 
         try {
-            long l=redisClinet.del(ApiConstCollection.REDIS_KEY_AGENT_TOKEN+IDUtil.decodeUserIDFromToken(token));
+            long l=redisClient.del(ApiConstCollection.REDIS_KEY_AGENT_TOKEN+IDUtil.decodeUserIDFromToken(token));
 
             if(l==1){
                 return gather;
@@ -308,8 +308,8 @@ public class AgentAccountServiceImpl extends ServiceImpl<AgentAccountMapper, Age
         try {
             QueryWrapper queryWrapper=new QueryWrapper();
             queryWrapper.eq("agent_id",agentAccount.getAgentId());
-            queryWrapper.eq("is_delete",ApiCodeCollection.SUCCESS);
-            queryWrapper.eq("type",1);
+            queryWrapper.eq("is_delete",ApiConstCollection.IS_DELETE_CODE);
+            queryWrapper.eq("type",ApiConstCollection.AGENT_TYPE_CODE);
 
 
             List<AgentAccount> agentAccountList=agentAccountMapper.selectList(queryWrapper);
@@ -360,7 +360,7 @@ public class AgentAccountServiceImpl extends ServiceImpl<AgentAccountMapper, Age
         try {
             QueryWrapper queryWrapper=new QueryWrapper();
             queryWrapper.eq("agent_id",agentAccount.getAgentId());
-            queryWrapper.eq("is_delete",ApiCodeCollection.SUCCESS);
+            queryWrapper.eq("is_delete",ApiConstCollection.IS_DELETE_CODE);
             queryWrapper.eq("type",agentAccount.getType());
 
             List<AgentAccount> agentAccountList=agentAccountMapper.selectList(queryWrapper);
@@ -374,6 +374,28 @@ public class AgentAccountServiceImpl extends ServiceImpl<AgentAccountMapper, Age
             gather.setCode(ApiConstCollection.UPDATE_FAIL_CODE);
             gather.setData(null);
             e.printStackTrace();
+            return gather;
+        }
+
+        return gather;
+    }
+
+    @Override
+    public Gather<AgentAccount> findAgentIdToAccount(String token) {
+
+        Gather<AgentAccount> gather=new Gather<>();
+
+        try {
+            long id=IDUtil.decodeUserIDFromEmailToken(token);
+            AgentAccount agentAccount=agentAccountMapper.selectById(id);
+
+            gather.setData(agentAccount);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage(),e);
+            gather.setCode(ApiConstCollection.AGENT_UPDATE_FAIL_CODE);
+            gather.setData(null);
             return gather;
         }
 

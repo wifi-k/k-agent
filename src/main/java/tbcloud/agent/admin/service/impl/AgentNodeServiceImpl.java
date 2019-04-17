@@ -56,11 +56,11 @@ public class AgentNodeServiceImpl extends ServiceImpl<AgentNodeMapper, AgentNode
     @Autowired
     IAgentAccountService iAgentAccountService;
 
-//    /**
-//     *
+    /**
+     *
 //     * @param agentNodeQuery
-//     * @return
-//     */
+     * @return
+     */
 //    @Override
 //    @Transactional(readOnly = true,rollbackFor = Exception.class)
 //    public Gather<Result<AgentNodeVo>> findByPage(AgentNodeQuery agentNodeQuery) {
@@ -161,7 +161,7 @@ public class AgentNodeServiceImpl extends ServiceImpl<AgentNodeMapper, AgentNode
         try {
             Map<String,String> map=new HashMap<>(2);
             map.put("agent_name",shiftNodeQuery.getAgentName());
-            map.put("is_delete","0");
+            map.put("is_delete",ApiConstCollection.IS_DELETE_CODE+"");
 
             QueryWrapper queryWrapper=new QueryWrapper();
             queryWrapper.allEq(map);
@@ -169,7 +169,7 @@ public class AgentNodeServiceImpl extends ServiceImpl<AgentNodeMapper, AgentNode
             List<AgentInfo> agentInfoList=agentInfoMapper.selectList(queryWrapper);
 
             if(agentInfoList.isEmpty()|| agentInfoList.size()>1){
-                gather.setCode(ApiConstCollection.UPDATE_FAIL_CODE);
+                gather.setCode(ApiConstCollection.AGENT_LOGIN_NAME_NO);
                 return gather;
             }
 
@@ -189,10 +189,10 @@ public class AgentNodeServiceImpl extends ServiceImpl<AgentNodeMapper, AgentNode
         }catch (Exception e){
             e.printStackTrace();
             log.error(e.getMessage(),e);
-            gather.setCode(ApiConstCollection.UPDATE_FAIL_CODE);
+            gather.setCode(ApiConstCollection.AGENT_UPDATE_FAIL_CODE);
             return gather;
         }
-        gather.setCode(ApiConstCollection.UPDATE_FAIL_CODE);
+        gather.setCode(ApiConstCollection.AGENT_UPDATE_FAIL_CODE);
 
         return gather;
     }
@@ -324,16 +324,24 @@ public class AgentNodeServiceImpl extends ServiceImpl<AgentNodeMapper, AgentNode
         Gather<Result<AgentNodeVo>> gather=new Gather<>();
         Result<AgentNodeVo> result=new Result<>();
 
-        String agentId=iAgentAccountService.findAgentIdToAccountId(agentNodeQuery.getToken());
-        agentNodeQuery.setAgentId(agentId);
+        try {
+            String agentId=iAgentAccountService.findAgentIdToAccountId(agentNodeQuery.getToken());
+            agentNodeQuery.setAgentId(agentId);
 
-        List<AgentNodeVo> agentNodeVoList=agentNodeMapper.selectByPage(agentNodeQuery);
-        long count=agentNodeMapper.countAgentInfo(agentNodeQuery);
+            List<AgentNodeVo> agentNodeVoList=agentNodeMapper.selectByPage(agentNodeQuery);
+            long count=agentNodeMapper.countAgentInfo(agentNodeQuery);
 
-        result.setPage(agentNodeVoList);
-        result.setCount(count);
+            result.setPage(agentNodeVoList);
+            result.setCount(count);
 
-        gather.setData(result);
+            gather.setData(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage(),e);
+            gather.setCode(ApiConstCollection.AGENT_UPDATE_FAIL_CODE);
+            return gather;
+        }
+
         return gather;
     }
 
@@ -342,16 +350,24 @@ public class AgentNodeServiceImpl extends ServiceImpl<AgentNodeMapper, AgentNode
         Gather<Result<AgentNodeVo>> gather=new Gather<>();
         Result<AgentNodeVo> result=new Result<>();
 
-        String agentId=iAgentAccountService.findAgentIdToAccountId(agentNodeQuery.getToken());
-        agentNodeQuery.setParentAgentId(agentId);
+        try {
+            String agentId=iAgentAccountService.findAgentIdToAccountId(agentNodeQuery.getToken());
+            agentNodeQuery.setParentAgentId(agentId);
 
-        List<AgentNodeVo> agentNodeVoList=agentNodeMapper.selectByPage(agentNodeQuery);
-        long count=agentNodeMapper.countAgentInfo(agentNodeQuery);
+            List<AgentNodeVo> agentNodeVoList=agentNodeMapper.selectByPage(agentNodeQuery);
+            long count=agentNodeMapper.countAgentInfo(agentNodeQuery);
 
-        result.setPage(agentNodeVoList);
-        result.setCount(count);
+            result.setPage(agentNodeVoList);
+            result.setCount(count);
 
-        gather.setData(result);
+            gather.setData(result);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e.getMessage(),e);
+            gather.setCode(ApiConstCollection.AGENT_UPDATE_FAIL_CODE);
+            return gather;
+        }
         return gather;
     }
 
@@ -402,10 +418,5 @@ public class AgentNodeServiceImpl extends ServiceImpl<AgentNodeMapper, AgentNode
 //        return agentNodeVoResult;
 //
 //    }
-
-
-
-
-
 
 }

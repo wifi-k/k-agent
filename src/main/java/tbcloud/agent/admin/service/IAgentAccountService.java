@@ -77,8 +77,16 @@ public interface IAgentAccountService extends IService<AgentAccount> {
 
     /**
      * 查询登录名 todo ok
+     * @param agentAccount
      * @return
      */
     Gather<AgentAccount> findAccountLoginName(AgentAccount agentAccount);
+
+    /**
+     * 返回对象
+     * @param token
+     * @return
+     */
+    Gather<AgentAccount> findAgentIdToAccount(String token);
 
 }

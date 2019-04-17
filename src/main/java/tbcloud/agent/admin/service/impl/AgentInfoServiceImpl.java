@@ -98,7 +98,7 @@ public class AgentInfoServiceImpl extends ServiceImpl<AgentInfoMapper, AgentInfo
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage(), e);
-            gather.setCode(ApiConstCollection.UPDATE_FAIL_CODE);
+            gather.setCode(ApiConstCollection.AGENT_UPDATE_FAIL_CODE);
             gather.setData(null);
             return gather;
         }
@@ -136,7 +136,7 @@ public class AgentInfoServiceImpl extends ServiceImpl<AgentInfoMapper, AgentInfo
         try {
             QueryWrapper queryWrapper = new QueryWrapper();
             //queryWrapper.eq("agent_name", agentInfo.getAgentName());
-            queryWrapper.eq("is_delete", ApiCodeCollection.SUCCESS);
+            queryWrapper.eq("is_delete", ApiConstCollection.IS_DELETE_CODE);
             queryWrapper.eq("agent_id", agentInfo.getAgentId());
 
             int i = agentInfoMapper.update(agentInfo, queryWrapper);
@@ -147,10 +147,10 @@ public class AgentInfoServiceImpl extends ServiceImpl<AgentInfoMapper, AgentInfo
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage(), e);
-            gather.setCode(ApiConstCollection.UPDATE_FAIL_CODE);
+            gather.setCode(ApiConstCollection.AGENT_UPDATE_FAIL_CODE);
             return gather;
         }
-        gather.setCode(ApiConstCollection.UPDATE_FAIL_CODE);
+        gather.setCode(ApiConstCollection.AGENT_UPDATE_FAIL_CODE);
         return gather;
     }
 
@@ -163,7 +163,7 @@ public class AgentInfoServiceImpl extends ServiceImpl<AgentInfoMapper, AgentInfo
             QueryWrapper queryWrapper = new QueryWrapper();
             queryWrapper.eq("agent_id", agentInfo.getAgentId());
             queryWrapper.eq("agent_name", agentInfo.getAgentName());
-            queryWrapper.eq("is_delete", ApiCodeCollection.SUCCESS);
+            queryWrapper.eq("is_delete", ApiConstCollection.IS_DELETE_CODE);
 
             List<AgentInfo> agentInfoList = agentInfoMapper.selectList(queryWrapper);
 
@@ -183,7 +183,7 @@ public class AgentInfoServiceImpl extends ServiceImpl<AgentInfoMapper, AgentInfo
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e.getMessage(), e);
-            gather.setCode(ApiConstCollection.UPDATE_FAIL_CODE);
+            gather.setCode(ApiConstCollection.AGENT_UPDATE_FAIL_CODE);
             gather.setData(null);
             return gather;
         }
@@ -227,7 +227,7 @@ public class AgentInfoServiceImpl extends ServiceImpl<AgentInfoMapper, AgentInfo
             gather.setData(agentInfoVoList.get(0));
         } catch (Exception e) {
             gather.setData(null);
-            gather.setCode(ApiConstCollection.UPDATE_FAIL_CODE);
+            gather.setCode(ApiConstCollection.AGENT_UPDATE_FAIL_CODE);
             e.printStackTrace();
             return gather;
         }
