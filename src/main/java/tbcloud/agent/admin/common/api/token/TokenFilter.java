@@ -1,7 +1,8 @@
-package tbcloud.agent.admin.common;
+package tbcloud.agent.admin.common.api.token;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import tbcloud.admin.api.ApiConstCollection;
+import tbcloud.agent.admin.common.RedisClient;
 import tbcloud.lib.api.util.IDUtil;
 
 import javax.servlet.*;
@@ -23,15 +24,11 @@ public class TokenFilter implements Filter {
         //不过滤的uri 定义
         String[] notFilter = new String[]{"/login"};
 
-        System.out.println("------------test token filter doFilter --------------");
         if(servletRequest instanceof HttpServletRequest) {
             HttpServletRequest req = (HttpServletRequest) servletRequest;
 
             //请求的uri
             String uri = req.getRequestURI();
-
-            System.out.println("filter>>>uri>>>"+uri);
-
 
             //是否过滤
             boolean doFilter = true;
@@ -64,8 +61,6 @@ public class TokenFilter implements Filter {
                     return;
                 }
 
-
-                System.out.println(agentAccountId+"--------------------------");
                 //判断有无id, 非法请求
                 if(agentAccountId==null || agentAccountId <=0){
                     servletRequest.getRequestDispatcher("/api/invalid").forward(servletRequest,servletResponse);
@@ -86,15 +81,12 @@ public class TokenFilter implements Filter {
                 }
 
                 if(token.equals(tokenQuery)){
-                    System.out.println("通过了");
                 }else{
-                    System.out.println("没有通过");
                     servletRequest.getRequestDispatcher("/api/invalid").forward(servletRequest,servletResponse);
                     return;
                 }
 
             }else{
-                System.out.println("no Filter>>>执行调用接口");
                 //不执行过滤操作
             }
 
@@ -104,9 +96,6 @@ public class TokenFilter implements Filter {
 
     @Override
     public void destroy() {
-
-        // TODO Auto-generated method stub
-        System.out.println("------------test token filter destory--------------");
 
     }
 }

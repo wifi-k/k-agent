@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import tbcloud.agent.admin.common.Gather;
 import tbcloud.agent.admin.common.Result;
+import tbcloud.agent.admin.common.api.version.ApiVersion;
 import tbcloud.agent.admin.entity.AgentNode;
 import tbcloud.agent.admin.entity.baby.AgentNodeQuery;
 import tbcloud.agent.admin.entity.baby.AgentNodeVo;
@@ -59,8 +60,10 @@ public class AgentNodeController {
 //        return iAgentNodeService.findByPageJoin(agentNodeQuery);
 //    }
 //
+
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
+    @ApiVersion
     public Gather<Void> updateNode(@RequestBody ShiftNodeQuery shiftNodeQuery) {
 
         return iAgentNodeService.shiftNodeJoin(shiftNodeQuery);
@@ -108,10 +111,10 @@ public class AgentNodeController {
      */
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     @ResponseBody
+    @ApiVersion
     public Gather<Result<AgentNodeVo>> selectByPageIs3(HttpServletRequest request, @RequestBody AgentNodeQuery agentNodeQuery) {
 
         agentNodeQuery.setToken(request.getHeader("api-token"));
-        System.out.println(request.getHeader("api-token") + "TOKEN--node--list");
 
         return iAgentNodeService.findByPage(agentNodeQuery);
     }
@@ -124,11 +127,9 @@ public class AgentNodeController {
      */
     @RequestMapping(value = "/listjoin", method = RequestMethod.POST)
     @ResponseBody
+    @ApiVersion
     public Gather<Result<AgentNodeVo>> getListJoinIs3(HttpServletRequest request, @RequestBody AgentNodeQuery agentNodeQuery) {
 
-
-        System.out.println("+++++++");
-        System.out.println(request.getHeader("api-token"));
         agentNodeQuery.setToken(request.getHeader("api-token"));
 
         return iAgentNodeService.findByPageIsJoin(agentNodeQuery);

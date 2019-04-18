@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import tbcloud.agent.admin.common.Gather;
 import tbcloud.agent.admin.common.Result;
+import tbcloud.agent.admin.common.api.version.ApiVersion;
 import tbcloud.agent.admin.entity.AgentInfo;
 import tbcloud.agent.admin.entity.baby.AgentInfoQuery;
 import tbcloud.agent.admin.entity.query.AgentInfoUpdate;
@@ -37,9 +38,8 @@ public class AgentInfoController {
      */
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     @ResponseBody
+    @ApiVersion
     public Gather<Result<AgentInfoVo>> selectByPage(HttpServletRequest request, @RequestBody AgentInfoQuery agentInfoQuery) {
-
-        System.out.println(request.getHeader("api-token") + "TOKEN--agent--list");
 
         agentInfoQuery.setToken(request.getHeader("api-token"));
 
@@ -48,9 +48,8 @@ public class AgentInfoController {
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
+    @ApiVersion
     public Gather<Void> updateAgentInfo(HttpServletRequest request, @RequestBody AgentInfo agentInfo) {
-
-        System.out.println(request.getHeader("api-token") + "TOKEN--agent--update");
 
         //agentInfoUpdate.setToken(request.getHeader("api-token"));
 
@@ -65,9 +64,8 @@ public class AgentInfoController {
      */
     @RequestMapping(value = "/info", method = RequestMethod.POST)
     @ResponseBody
+    @ApiVersion
     public Gather<AgentInfoVo> selectAgentInfo(HttpServletRequest request, @RequestBody AgentInfoQuery agentInfoQuery) {
-
-        System.out.println(request.getHeader("api-token") + "TOKEN--agent--info");
 
         agentInfoQuery.setToken(request.getHeader("api-token"));
 

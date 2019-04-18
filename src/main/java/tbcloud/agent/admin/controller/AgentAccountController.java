@@ -1,21 +1,19 @@
 package tbcloud.agent.admin.controller;
 
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import tbcloud.agent.admin.common.Gather;
 import tbcloud.agent.admin.common.Result;
+import tbcloud.agent.admin.common.api.version.ApiVersion;
 import tbcloud.agent.admin.entity.AgentAccount;
 import tbcloud.agent.admin.entity.baby.AgentAccountQuery;
 import tbcloud.agent.admin.entity.baby.AgentAccountUpdate;
 import tbcloud.agent.admin.entity.vo.LoginToken;
 import tbcloud.agent.admin.service.IAgentAccountService;
-import tbcloud.lib.api.util.IDUtil;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 /**
  * <p>
@@ -27,6 +25,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/agent/account")
+
 public class AgentAccountController {
 
     @Autowired
@@ -34,9 +33,9 @@ public class AgentAccountController {
 
     @RequestMapping(value = "/add",method = RequestMethod.POST)
     @ResponseBody
+    @ApiVersion
     public Gather<Void> addAgentAccount(HttpServletRequest request, @RequestBody AgentAccountUpdate agentAccountUpdate){
 
-        System.out.println(request.getHeader("api-token")+"TOKEN--ACCOUNT--add");
         agentAccountUpdate.setToken(request.getHeader("api-token"));
 
         return iAgentAccountService.addAgentAccount(agentAccountUpdate);
@@ -44,9 +43,9 @@ public class AgentAccountController {
 
     @RequestMapping(value = "/update",method = RequestMethod.POST)
     @ResponseBody
+    @ApiVersion
     public Gather<Void> updateAgentAccount(HttpServletRequest request, @RequestBody AgentAccountUpdate agentAccountUpdate){
 
-        System.out.println(request.getHeader("api-token")+"TOKEN--ACCOUNT--update");
         agentAccountUpdate.setToken(request.getHeader("api-token"));
 
         return iAgentAccountService.updateAgentAccount(agentAccountUpdate);
@@ -55,10 +54,9 @@ public class AgentAccountController {
 
     @RequestMapping(value = "/delete",method = RequestMethod.POST)
     @ResponseBody
-    //OK
+    @ApiVersion
     public Gather<Void> deleteAgentAccount(HttpServletRequest request, @RequestBody AgentAccountUpdate agentAccountUpdate){
 
-        System.out.println(request.getHeader("api-token")+"TOKEN--ACCOUNT--delete");
         agentAccountUpdate.setToken(request.getHeader("api-token"));
 
         return iAgentAccountService.deleteAgentAccount(agentAccountUpdate);
@@ -66,10 +64,9 @@ public class AgentAccountController {
 
     @RequestMapping(value = "/list",method = RequestMethod.POST)
     @ResponseBody
-    //OK
+    @ApiVersion
     public Gather<Result<AgentAccount>> selectByPage(HttpServletRequest request, @RequestBody AgentAccountQuery agentAccountQuery){
 
-        System.out.println(request.getHeader("api-token")+"TOKEN--ACCOUNT--list");
         //TOKEN 存入
         agentAccountQuery.setToken(request.getHeader("api-token"));
 
@@ -78,7 +75,7 @@ public class AgentAccountController {
 
     @RequestMapping(value = "/login",method = RequestMethod.POST)
     @ResponseBody
-    //ok
+    @ApiVersion
     public Gather<LoginToken> loginAgentAccount(@RequestBody AgentAccount agentAccount){
 
         return iAgentAccountService.agentAccountLogin(agentAccount);
@@ -86,7 +83,7 @@ public class AgentAccountController {
 
     @RequestMapping(value = "/logout",method = RequestMethod.POST)
     @ResponseBody
-    //ok
+    @ApiVersion
     public Gather<Void> logoutAgentAccount(HttpServletRequest request){
 
         String token=request.getHeader("api-token");
@@ -96,6 +93,7 @@ public class AgentAccountController {
 
     @RequestMapping(value = "/info",method = RequestMethod.POST)
     @ResponseBody
+    @ApiVersion
     public Gather<AgentAccount> selectLoginName(HttpServletRequest request){
 
         String token=request.getHeader("api-token");
