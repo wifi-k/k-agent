@@ -128,11 +128,11 @@
             </if>
 
             <if test="agentNodeQuery!=null and agentNodeQuery.routerType!=null and agentNodeQuery.routerType!=''">
-                and an.product=#{agentNodeQuery.routerType}
+                and an.router_type=#{agentNodeQuery.routerType}
             </if>
 
             <if test="agentNodeQuery!=null and agentNodeQuery.edition!=null and agentNodeQuery.edition!='' ">
-                and an.edition=#{agentNodeQueryIs.edition}
+                and an.edition=#{agentNodeQuery.edition}
             </if>
             <if test="agentNodeQuery!=null and agentNodeQuery.nodeId!=null and agentNodeQuery.nodeId!='' ">
                 and an.node_id=#{agentNodeQuery.nodeId}

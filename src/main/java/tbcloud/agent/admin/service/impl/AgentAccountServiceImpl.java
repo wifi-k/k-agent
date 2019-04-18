@@ -274,7 +274,7 @@ public class AgentAccountServiceImpl extends ServiceImpl<AgentAccountMapper, Age
             gather.setData(null);
             return gather;
         }
-        gather.setCode(ApiConstCollection.AGENT_UPDATE_FAIL_CODE);
+        gather.setCode(ApiConstCollection.AGENT_LOGIN_PASSWORD_NO);
         gather.setData(null);
         return gather;
     }
