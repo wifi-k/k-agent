@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @RestController
 @RequestMapping("/api/agent/node")
+
 public class AgentNodeController {
 
     @Autowired

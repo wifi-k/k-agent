@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
  * @author: Dmm
  * @date: 2019/4/18 10:51
  */
-@Target(ElementType.METHOD)
+@Target({ElementType.METHOD,ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Component
 public @interface ApiVersion {

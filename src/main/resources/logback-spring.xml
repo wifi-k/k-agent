@@ -57,25 +57,41 @@
         </encoder>
     </appender>
 
+    <appender name="agentCommon" class="ch.qos.logback.core.rolling.RollingFileAppender">
 
-    <logger name="tbcloud.agent.admin.mapper" addtivity="false" level="debug">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log_dir}/%d{yyyy-MM-dd}/tbcloud-agent-common.log</fileNamePattern>
+            <maxHistory>${maxHistory}</maxHistory>
+        </rollingPolicy>
 
-        <!--<appender-ref ref="STDOUT"/>-->
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %contextName [%thread] %-5level %logger -%msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <logger name="tbcloud.agent.admin.mapper" addtivity="false" level="${logback.level}">
+
         <appender-ref ref="agentMapper"/>
 
     </logger>
 
     <logger name="tbcloud.agent.admin.service.impl" addtivity="false" level="debug">
 
-        <!--<appender-ref ref="STDOUT"/>-->
         <appender-ref ref="agentService"/>
 
     </logger>
 
     <logger name="tbcloud.agent.admin.utils" addtivity="false" level="debug">
 
-        <!--<appender-ref ref="STDOUT"/>-->
         <appender-ref ref="agentUtils"/>
+
+    </logger>
+
+    <logger name="tbcloud.agent.admin.common" addtivity="false" level="debug">
+
+        <appender-ref ref="agentCommon"/>
 
     </logger>
 

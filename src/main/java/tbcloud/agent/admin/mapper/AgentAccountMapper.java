@@ -15,7 +15,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 @Mapper
 @Component
-
 public interface AgentAccountMapper extends BaseMapper<AgentAccount> {
 
 }

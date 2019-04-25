@@ -1,5 +1,6 @@
 package tbcloud.agent.admin.common.api.token;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import tbcloud.admin.api.ApiConstCollection;
 import tbcloud.agent.admin.common.RedisClient;
@@ -13,6 +14,7 @@ import java.io.IOException;
  * @author: Dmm
  * @date: 2019/4/3 10:16
  */
+@Slf4j
 public class TokenFilter implements Filter {
 
     @Autowired
@@ -43,14 +45,17 @@ public class TokenFilter implements Filter {
 
             if(doFilter){
 
+                String uriw=req.getRequestURI();
                 String token = req.getHeader("api-token");
+
                 //判断有无token, 非法请求
                 if(token==null || "".equals(token)){
                     servletRequest.getRequestDispatcher("/api/invalid").forward(servletRequest,servletResponse);
+                    log.info("no token {}",token);
+                    System.out.println("no token {}"+token);
                     return;
 
                 }
-
                 //转换异常
                 Long agentAccountId= null;
                 try {
@@ -58,11 +63,13 @@ public class TokenFilter implements Filter {
                 } catch (Exception e) {
                     e.printStackTrace();
                     servletRequest.getRequestDispatcher("/api/invalid").forward(servletRequest,servletResponse);
+                    log.info("token error and agentAccount{} {}",token,agentAccountId);
                     return;
                 }
 
                 //判断有无id, 非法请求
                 if(agentAccountId==null || agentAccountId <=0){
+                    System.out.println("agentAccountId"+agentAccountId);
                     servletRequest.getRequestDispatcher("/api/invalid").forward(servletRequest,servletResponse);
                     return;
                 }
@@ -70,6 +77,7 @@ public class TokenFilter implements Filter {
 
                 if(tokenQuery==null){
                     Long l=redisClient.ttl(ApiConstCollection.REDIS_KEY_AGENT_TOKEN+agentAccountId);
+                    System.out.println();
                     if(l==-2){
                         //过期
                         servletRequest.getRequestDispatcher("/api/expires").forward(servletRequest,servletResponse);
@@ -81,6 +89,7 @@ public class TokenFilter implements Filter {
                 }
 
                 if(token.equals(tokenQuery)){
+
                 }else{
                     servletRequest.getRequestDispatcher("/api/invalid").forward(servletRequest,servletResponse);
                     return;
